@@ -1,50 +1,154 @@
-# Group 12 Updated Project
+# Student Management System
 
-## Student Management System
+A polished Streamlit registry for a five-person academic group project. Staff can add, view, edit and delete student records; every field is checked with regular expressions; every record is saved to a CSV file; failures never crash the app; Gemini can answer class questions; Gmail SMTP sends a grade report.
 
-Group 12 is building a Python and Streamlit application to manage student records. Planned features include adding, viewing, editing and deleting records, CSV storage, input validation, exception handling, an AI assistant and email reports.
+The work is split exactly as the proposal required: **one folder per teammate**.
 
-**Group leader: Asher Gbolahan.**
+---
 
-## Starting point
-
-This README is the shared starting file. Each member will create their own branch and submit their assigned folder themselves. The full application will be assembled after the contributions have been reviewed and merged.
-
-## Responsibilities
-
-- **Asher Gbolahan:** `Asher_Gbolahan/` — Student and StudentManager classes; integration and review coordination.
-- **Grace Ukpai Akpu:** `Grace_Ukpai_Akpu/` — CSV file handling; `Grace_Ukpai_Akpu2/` — edit and delete screens.
-- **Great Joseph:** `Great_Joseph/` — regular expression validation; `Great_Joseph2/` — AI and email integrations.
-- **Oluwakorede Olawoye:** `Oluwakorede_Olawoye/` — add and view screens and dashboard.
-- **Ismail Muhammed:** `Ismail_Muhammed/` — custom exceptions and safe action handling.
-
-Folder spelling and capitalization must match the shared imports exactly. Two assigned folders for the same person can be submitted on that person's branch.
-
-## How to contribute
-
-1. Clone this repository, or update your existing clone from `main`.
-2. Create your own branch from the latest `main`. If your named branch already exists, coordinate with Asher before reusing it.
-3. Add only your assigned folder or folders. Do not upload another member's work.
-4. Commit with a clear message and push your branch.
-5. Open a pull request into `main`. Asher reviews and merges accepted work.
-
-Example for a new Asher branch:
+## Run it
 
 ```bash
-git switch main
-git pull --ff-only origin main
-git switch -c Asher_Gbolahan
-git add Asher_Gbolahan/
-git commit -m "Add student model and manager"
-git push -u origin Asher_Gbolahan
+cd student-management-system
+py -3 -m pip install -r requirements.txt
+py -3 -m streamlit run app.py
 ```
 
-Use your own name for your branch and stage only your assigned files. Do not force-push shared branches.
+On Windows you can also double-click `run.bat`. Python 3.10 or newer is required.
+The default server listens only on `127.0.0.1`, so this is a local application until shared sign-in is configured.
 
-## Shared integration files
+Optional keys go in a `.env` file (copy `.env.example`):
 
-Asher will coordinate the shared `app.py`, `requirements.txt`, application settings and assets as the modules are merged. The existing full app imports members' modules, so it should only be added when those dependencies are available. This starter does not yet run the complete application.
+| Variable | Purpose |
+| --- | --- |
+| `GEMINI_API_KEY` | Live Gemini answers and written summaries |
+| `GMAIL_ADDRESS` | Sender for grade reports |
+| `GMAIL_APP_PASSWORD` | Gmail **app password**, not the normal login |
 
-## Keep private files out of Git
+Without those keys the rest of the system still runs. The AI page answers from the live register, and the email page still shows a full report preview.
 
-Never commit `.env`, API keys, passwords, `.streamlit/secrets.toml`, Python cache files or real student records. Use placeholder configuration and approved demonstration data only.
+---
+
+## Who built what
+
+| Member | Folder | Responsibility | Proposed branch |
+| --- | --- | --- | --- |
+| Asher Gbolahan | `Asher_Gbolahan/` | `Student` and `StudentManager` (OOP) | `Asher_Gbolahan` |
+| Grace Ukpai Akpu | `Grace_Ukpai_Akpu/` | `save_to_file()` / `load_from_file()` | `Grace_Ukpai_Akpu` |
+| Great Joseph | `Great_Joseph/` | Regex validation | `Great_Joseph` |
+| Oluwakorede Olawoye | `Oluwakorede_Olawoye/` | Add Student, View Students, dashboard | `Oluwakorede_Olawoye` |
+| Grace Ukpai Akpu | `Grace_Ukpai_Akpu2/` | Edit Student, Delete Student | `Grace_Ukpai_Akpu2` |
+| Ismail Muhammed | `Ismail_Muhammed/` | Custom exceptions + `safe_action()` | `Ismail_Muhammed` |
+| Great Joseph | `Great_Joseph2/` | Gemini, Gmail SMTP, this README | `Great_Joseph2` |
+
+`app.py` is the shared shell. It only composes the folders above.
+
+---
+
+## Required topics
+
+**OOP** — `Student` keeps fields private and exposes getters/setters, letter grades, and standing. `StudentManager` is the only class that adds, finds, edits, deletes, and asks the file layer to persist.
+
+**File handling** — Python’s built-in `csv` module reads and writes `data/students.csv`. Every successful add, edit or delete rewrites the file immediately.
+
+**Regular expressions** — `Great_Joseph/validate.py` checks student ID, name, email, phone, course and grade. Add and Edit both call the same functions.
+
+**Exception handling** — File I/O, Gemini HTTP calls, and SMTP login/send all go through `safe_action()`. Expected problems raise `DuplicateStudentError`, `StudentNotFoundError`, `ValidationError`, `FileOperationError`, `AIServiceError` or `EmailServiceError`, and Streamlit shows a sentence instead of a traceback.
+
+**GUI** — Streamlit sidebar navigation, dashboard metrics, searchable register, forms, confirmation on delete.
+
+**Gemini AI** — Ask a class question or generate a one-paragraph student summary via the Gemini REST API.
+
+**External API** — Grade reports are sent with Python’s built-in `smtplib` against `smtp.gmail.com`.
+
+---
+
+## Project layout
+
+```
+app.py
+requirements.txt
+data/students.csv
+assets/styles.css
+Asher_Gbolahan/
+Grace_Ukpai_Akpu/
+Great_Joseph/
+Oluwakorede_Olawoye/
+Grace_Ukpai_Akpu2/
+Ismail_Muhammed/
+Great_Joseph2/
+```
+
+---
+
+## Git workflow (as proposed)
+
+```bash
+git checkout -b Asher_Gbolahan
+git checkout -b Grace_Ukpai_Akpu
+git checkout -b Great_Joseph
+git checkout -b Oluwakorede_Olawoye
+git checkout -b Grace_Ukpai_Akpu2
+git checkout -b Ismail_Muhammed
+git checkout -b Great_Joseph2
+```
+
+Merge into `main` through pull requests, one branch per person.
+
+---
+
+*Team lead: Asher Gbolahan. Built to match the group project proposal — GUI, OOP, file handling, exceptions, regex, Gemini, and an external email service.*
+
+
+## Interface refresh and OpenAI assistant
+The interface uses a bright blue and teal CampusHub theme. Team ownership folders are preserved.
+Set `OPENAI_API_KEY` in the local, Git-ignored `.env` file and select OpenAI on the AI Assistant page.
+`OPENAI_MODEL` defaults to `gpt-4.1-mini` and can be changed to a model available to your API project.
+Never share the key in chat or commit `.env`. No key is bundled with the project.
+The assistant sends academic context only when you submit a question or generate a summary.
+Local insights remain available without credentials. Gemini remains selectable.
+API documentation: https://developers.openai.com/api/docs/quickstart
+CSV writes use atomic replacement and a file lock around each complete read/change/save transaction.
+Failed add/edit/delete operations restore the saved in-memory state. Existing CSV rows are validated before use.
+
+
+## GitHub repository
+
+Repository: https://github.com/ashergbolahan-create/group-12-updated-project
+
+The repository excludes local student records. The application creates data/students.csv when records are saved; data/students.example.csv documents the empty CSV format.
+
+## Local fixes and email setup
+
+All work can remain local: running the app, tests, or email setup does not commit or push anything.
+
+- Independent saves reload the latest CSV under a cross-process lock so one user's addition does not erase another's.
+- Edit forms retain the original record and reject changes if someone else updated it. Use **Reload current record** to review the latest version before trying again.
+- Delete confirmation resets if the displayed record changes.
+- Invalid CSV rows report their row number and validation problem. Correct the CSV while the app is closed, then retry.
+- Local insights supports explicit whole-class questions such as `Who is below 80?` and `How many students are at least 50?`. Course-specific questions are directed to the directory filters instead of returning an unrelated answer.
+- Existing OpenAI and Gemini HTTP integrations have not been changed in this round. Gemini still needs its model update before live use.
+
+For Gmail, set `GMAIL_ADDRESS` and `TEST_EMAIL_RECIPIENT` in your local `.env` file.
+Enable Google 2-Step Verification and create an app password at https://myaccount.google.com/apppasswords.
+Then double-click `setup_email.bat`. It asks for the app password using hidden input, sends a test with no student data, and saves the password locally only after Gmail accepts the message.
+Do not enter your normal Google password. If app passwords are unavailable for your account, consult https://support.google.com/accounts/answer/185833.
+Restart the app after setup. The Email Reports page also has a test email button; student reports still go to each selected student's own address.
+
+## Sign-in for shared access
+
+Local-only mode is intended for a trusted user of this computer. It does not provide separate identities for people sharing the computer.
+Do not expose local-only mode through a tunnel or reverse proxy.
+For LAN or hosted access, the app refuses to show records until sign-in is enabled:
+
+1. Register a Google OAuth web application. Set its authorized redirect URI to your app URL plus `/oauth2callback`.
+2. Copy `.streamlit/secrets.toml.example` to `.streamlit/secrets.toml`. Supply the OAuth client ID, client secret, redirect URI and a random cookie secret (for example, generate one with `py -3 -c "import secrets; print(secrets.token_urlsafe(48))"`). Use HTTPS on a public deployment.
+3. Set `AUTH_REQUIRED=true` and `ALLOWED_EMAILS=your-address@example.com` in `.env`. Multiple staff email addresses can be separated by commas. Every allowlisted staff member has full register access.
+4. Only then change `server.address` for your intended network and restart. An unverified or non-allowlisted Google account cannot access the register.
+
+The real Google login flow requires your OAuth account settings; automated tests use simulated identity claims and do not verify the live provider setup.
+
+## Regression tests
+
+Run `py -3 -B -m unittest discover -s tests -v` from this folder.
+Tests use temporary records and mocked mail services; they do not modify your live CSV, send emails, or call AI providers.
