@@ -20,7 +20,7 @@ from Ismail_Muhammed.safe_action import safe_action
 
 GEMINI_URL = (
     "https://generativelanguage.googleapis.com/v1beta/models/"
-    "gemini-2.0-flash:generateContent?key={key}"
+    "{model}:generateContent"
 )
 
 
@@ -93,9 +93,9 @@ def _post_gemini(prompt: str) -> str:
         "generationConfig": {"temperature": 0.3, "maxOutputTokens": 400},
     }
     request = urllib.request.Request(
-        GEMINI_URL.format(key=key),
+        GEMINI_URL.format(model=(os.getenv("GEMINI_MODEL") or "gemini-3.5-flash-lite").strip()),
         data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
+        headers={"Content-Type": "application/json", "x-goog-api-key": key},
         method="POST",
     )
     try:
