@@ -176,9 +176,12 @@ def render_ai_assistant(manager: StudentManager) -> None:
     elif provider != "Local insights":
         st.info(f"Add {env_name} to your local .env file to enable {provider}. Local insights are available now.")
         with st.expander("Connect your API key"):
-            st.write("Open the .env file in the project folder and add your own key. Never commit this file or paste your key into chat.")
+            st.write("Run setup_local.bat in the project folder to enter your key privately, then restart the app. Each new computer needs its own setup. Never commit .env or paste your key into chat.")
             st.code(f"{env_name}=your_key_here", language="text")
-            st.link_button("OpenAI API keys", "https://platform.openai.com/api-keys")
+            if provider == "OpenAI":
+                st.link_button("OpenAI API keys", "https://platform.openai.com/api-keys")
+            else:
+                st.link_button("Gemini API keys", "https://aistudio.google.com/apikey")
     st.subheader("Your academic assistant")
     st.caption("Explore performance, identify students needing support, or plan your next steps.")
     history = st.session_state.setdefault("academic_chat", [])

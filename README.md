@@ -9,12 +9,38 @@ The work is split exactly as the proposal required: **one folder per teammate**.
 ## Run it
 
 ```bash
-cd student-management-system
+git clone https://github.com/ashergbolahan-create/group-12-updated-project.git
+cd group-12-updated-project
 py -3 -m pip install -r requirements.txt
+py -3 setup_local.py
 py -3 -m streamlit run app.py
 ```
 
 On Windows you can also double-click `run.bat`. Python 3.10 or newer is required.
+On a fresh clone, `run.bat` opens a private setup prompt before starting the app.
+Press Enter to skip optional services. Run `setup_local.bat` again whenever you
+want to add or change an API key; restart the app afterwards.
+
+### Moving to another PC
+
+GitHub contains the application, but intentionally excludes `.env` (passwords and
+API keys) and `data/students.csv` (your student records). A new clone therefore
+starts with an empty register and no live AI or email credentials.
+
+1. Run `run.bat` and enter a Gemini or OpenAI key if you want that provider.
+2. Run `setup_email.bat` to enter your Gmail address and app password. This sends
+   a test email to your own address unless `TEST_EMAIL_RECIPIENT` is set.
+3. Restart the app. On the AI page, select the provider you configured, or choose
+   **Local insights** to work without any API key.
+4. To move existing records, close the app on both PCs and privately copy
+   `data/students.csv` from the old PC into the new clone's `data` folder. Back up
+   any existing destination CSV first; replacing it replaces that PC's register.
+
+For another computer you personally control, you can also privately transfer your
+existing `.env` into the project root instead of re-entering the settings. Do not
+upload either private file to GitHub or share your credentials with teammates;
+teammates should configure their own accounts. Clones do not sync student records.
+
 The default server listens only on `127.0.0.1`, so this is a local application until shared sign-in is configured.
 
 Optional keys go in a `.env` file (copy `.env.example`):
@@ -127,9 +153,10 @@ All work can remain local: running the app, tests, or email setup does not commi
 - Delete confirmation resets if the displayed record changes.
 - Invalid CSV rows report their row number and validation problem. Correct the CSV while the app is closed, then retry.
 - Local insights supports explicit whole-class questions such as `Who is below 80?` and `How many students are at least 50?`. Course-specific questions are directed to the directory filters instead of returning an unrelated answer.
-- Existing OpenAI and Gemini HTTP integrations have not been changed in this round. Gemini still needs its model update before live use.
+- Gemini's model is configurable with `GEMINI_MODEL` in `.env`.
 
-For Gmail, set `GMAIL_ADDRESS` and `TEST_EMAIL_RECIPIENT` in your local `.env` file.
+For Gmail, run `setup_email.bat`; it asks for the sender if it is not configured.
+Optionally set `TEST_EMAIL_RECIPIENT` in `.env`; a blank value defaults to the sender.
 Enable Google 2-Step Verification and create an app password at https://myaccount.google.com/apppasswords.
 Then double-click `setup_email.bat`. It asks for the app password using hidden input, sends a test with no student data, and saves the password locally only after Gmail accepts the message.
 Do not enter your normal Google password. If app passwords are unavailable for your account, consult https://support.google.com/accounts/answer/185833.

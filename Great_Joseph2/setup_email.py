@@ -14,10 +14,12 @@ from Great_Joseph.validate import is_valid_email
 
 def main():
     load_dotenv(ROOT / ".env", override=True)
-    sender = os.getenv("GMAIL_ADDRESS", "")
-    recipient = os.getenv("TEST_EMAIL_RECIPIENT", sender)
+    sender = os.getenv("GMAIL_ADDRESS", "").strip()
+    if not is_valid_email(sender):
+        sender = input("Gmail sender address: ").strip()
+    recipient = os.getenv("TEST_EMAIL_RECIPIENT", "").strip() or sender
     if not is_valid_email(sender) or not is_valid_email(recipient):
-        print("Set GMAIL_ADDRESS and TEST_EMAIL_RECIPIENT in .env first.")
+        print("Enter a valid Gmail address and, if supplied, TEST_EMAIL_RECIPIENT.")
         return 1
     print(f"Sender: {sender}\nTest recipient: {recipient}")
     print("Generate a Google app password at https://myaccount.google.com/apppasswords")
@@ -26,12 +28,14 @@ def main():
     if len(password) != 16 or not password.isascii() or not password.isalpha():
         print("Expected a 16-letter Google app password. Nothing was saved or sent.")
         return 1
+    os.environ["GMAIL_ADDRESS"] = sender
     os.environ["GMAIL_APP_PASSWORD"] = password
     try:
         send_test_email(recipient)
     except EmailServiceError as exc:
         print(str(exc))
         return 1
+    set_key(str(ROOT / ".env"), "GMAIL_ADDRESS", sender)
     set_key(str(ROOT / ".env"), "GMAIL_APP_PASSWORD", password)
     print("Gmail accepted the test email. Check your inbox and spam folder.")
     print("The app password is saved in your local, Git-ignored .env file.")
