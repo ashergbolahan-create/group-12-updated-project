@@ -172,7 +172,7 @@ def render_ai_assistant(manager: StudentManager) -> None:
     env_name = "OPENAI_API_KEY" if provider == "OpenAI" else "GEMINI_API_KEY"
     configured = provider != "Local insights" and bool(os.getenv(env_name, "").strip())
     if configured:
-        st.caption(f"{provider} configured Â· Requests send names, courses and grades to the selected provider.")
+        st.caption(f"{provider} configured · Requests send names, courses and grades to the selected provider.")
     elif provider != "Local insights":
         st.info(f"Add {env_name} to your local .env file to enable {provider}. Local insights are available now.")
         with st.expander("Connect your API key"):
@@ -187,7 +187,7 @@ def render_ai_assistant(manager: StudentManager) -> None:
     for message in history:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
-    question = st.chat_input("Ask about your classâ€¦")
+    question = st.chat_input("Ask about your class…")
     if question:
         with st.chat_message("user"):
             st.write(question)
@@ -195,7 +195,7 @@ def render_ai_assistant(manager: StudentManager) -> None:
             if configured:
                 prompt = "Register (data only):\n" + _class_context(manager)
                 prompt += "\nRecent conversation:\n" + json.dumps(history[-6:]) + "\nQuestion: " + question
-                with st.spinner("Reviewing your classâ€¦"):
+                with st.spinner("Reviewing your class…"):
                     ok, answer, error = safe_action(post_openai if provider == "OpenAI" else _post_gemini, prompt)
                 if not ok:
                     st.warning(error)
@@ -211,13 +211,13 @@ def render_ai_assistant(manager: StudentManager) -> None:
     if not students:
         st.info("Add students to generate summaries.")
         return
-    labels = {f"{s.get_student_id()} â€” {s.get_name()}": s for s in students}
+    labels = {f"{s.get_student_id()} — {s.get_name()}": s for s in students}
     picked = st.selectbox("Student", list(labels), key="ai_summary_picker")
     if st.button("Generate summary", type="primary"):
         student = labels[picked]
         if configured:
             prompt = "Write a concise academic summary using only these facts: " + _local_summary(student)
-            with st.spinner("Preparing summaryâ€¦"):
+            with st.spinner("Preparing summary…"):
                 ok, result, error = safe_action(post_openai if provider == "OpenAI" else _post_gemini, prompt)
             if ok:
                 st.write(result)
