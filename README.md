@@ -12,14 +12,13 @@ The work is split exactly as the proposal required: **one folder per teammate**.
 git clone https://github.com/ashergbolahan-create/group-12-updated-project.git
 cd group-12-updated-project
 py -3 -m pip install -r requirements.txt
-py -3 setup_local.py
 py -3 -m streamlit run app.py
 ```
 
 On Windows you can also double-click `run.bat`. Python 3.10 or newer is required.
-On a fresh clone, `run.bat` opens a private setup prompt before starting the app.
-Press Enter to skip optional services. Run `setup_local.bat` again whenever you
-want to add or change an API key; restart the app afterwards.
+`run.bat` starts the app without asking for optional credentials.
+To enable live AI, run `setup_local.bat` separately to enter an API key, then
+restart the app. Email sending requires `setup_email.bat` separately.
 
 ### Moving to another PC
 
@@ -27,7 +26,8 @@ GitHub contains the application, but intentionally excludes `.env` (passwords an
 API keys) and `data/students.csv` (your student records). A new clone therefore
 starts with an empty register and no live AI or email credentials.
 
-1. Run `run.bat` and enter a Gemini or OpenAI key if you want that provider.
+1. Run `run.bat` to open the app. Optionally run `setup_local.bat` separately
+   to enter a Gemini or OpenAI key if you want that provider.
 2. Run `setup_email.bat` to enter your Gmail address and app password. This sends
    a test email to your own address unless `TEST_EMAIL_RECIPIENT` is set.
 3. Restart the app. On the AI page, select the provider you configured, or choose
